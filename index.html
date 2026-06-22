@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구리역 하이니티 리버파크 입주예정자협의회 위임 동의</title>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <style>
+        /* 전체 톤 & 매너: 첨부 이미지 기반의 푸른빛 (Navy & Blue) */
+        :root {
+            --primary-blue: #00479A; /* 깊은 파란색 */
+            --light-blue: #EAF2F8;
+            --text-dark: #333333;
+        }
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+        }
+        /* 상단 배너 디자인 */
+        .header-banner {
+            background-color: var(--primary-blue);
+            /* 첨부하신 이미지를 폴더에 넣고 아래 주소를 이미지 이름으로 바꾸면 배경이 됩니다 */
+            background-image: url('banner.jpg'); 
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header-banner h1 {
+            margin: 0;
+            font-size: 28px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+        /* 본문 및 폼 영역 */
+        .container {
+            max-width: 600px;
+            margin: -20px auto 40px auto; /* 배너 위로 살짝 올라오게 */
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary-blue);
+        }
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        /* 서명 패드 영역 */
+        .signature-wrapper {
+            border: 2px dashed #b3cce6;
+            border-radius: 6px;
+            background-color: var(--light-blue);
+            margin-bottom: 10px;
+        }
+        canvas {
+            width: 100%;
+            height: 200px;
+            display: block;
+        }
+        .btn-clear {
+            background-color: #e0e0e0;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-submit {
+            background-color: var(--primary-blue);
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        .btn-submit:hover {
+            background-color: #003377;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-banner">
+        <h1>입주예정자협의회 위임장</h1>
+        <p>여러분의 소중한 권리를 위해 위임에 동참해 주세요.</p>
+    </div>
+
+    <div class="container">
+        <form id="weimForm">
+            <div class="form-group">
+                <label for="name">계약자 성명 (필수)</label>
+                <input type="text" id="name" required placeholder="홍길동">
+            </div>
+            
+            <div class="form-group" style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label for="dong">동 (필수)</label>
+                    <input type="text" id="dong" required placeholder="101동">
+                </div>
+                <div style="flex: 1;">
+                    <label for="ho">호 (필수)</label>
+                    <input type="text" id="ho" required placeholder="1004호">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">휴대전화 번호 (필수)</label>
+                <input type="tel" id="phone" required placeholder="010-1234-5678">
+            </div>
+
+            <div class="form-group">
+                <label>전자 서명 (필수)</label>
+                <div class="signature-wrapper">
+                    <canvas id="signature-pad"></canvas>
+                </div>
+                <button type="button" class="btn-clear" id="clear">서명 지우기</button>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">위임장 제출하기</button>
+        </form>
+    </div>
+
+    <script>
+        // 1. 서명 패드 활성화
+        var canvas = document.getElementById('signature-pad');
+        function resizeCanvas() {
+            var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+        }
+        window.onresize = resizeCanvas;
+        resizeCanvas();
+
+        var signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgba(255, 255, 255, 0)'
+        });
+
+        // 지우기 버튼 동작
+        document.getElementById('clear').addEventListener('click', function () {
+            signaturePad.clear();
+        });
+
+        // 2. 구글 시트로 데이터 전송
+        document.getElementById('weimForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // 페이지 새로고침 방지
+
+            if (signaturePad.isEmpty()) {
+                alert("서명을 입력해 주세요.");
+                return;
+            }
+
+            var submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "제출 중입니다...";
+            submitBtn.disabled = true;
+
+            // 데이터 수집
+            var data = {
+                name: document.getElementById('name').value,
+                dong: document.getElementById('dong').value,
+                ho: document.getElementById('ho').value,
+                phone: document.getElementById('phone').value,
+                signature: signaturePad.toDataURL() // 서명을 이미지(Base64) 데이터로 변환
+            };
+
+            var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzR1oMNavA-wsnIwDjIQ2Gpa4XTZc6Kt75F1YCsVT88JntaQQtASBK4aVdXTitff4d6/exec';
+
+            // 이 부분을 기존 fetch 코드 블록과 교체하세요
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(res => {
+                if (res.result === "success") {
+                    alert("위임장 제출이 완료되었습니다. 감사합니다!");
+                    document.getElementById('weimForm').reset();
+                    signaturePad.clear();
+                } else {
+                    // 구글 내부에서 발생한 진짜 에러를 경고창으로 띄웁니다.
+                    alert("구글 서버 저장 실패: " + res.message);
+                }
+                submitBtn.innerText = "위임장 제출하기";
+                submitBtn.disabled = false;
+            })
+            .catch(error => {
+                alert("네트워크 오류가 발생했습니다. 다시 시도해 주세요.");
+                submitBtn.innerText = "위임장 제출하기";
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
