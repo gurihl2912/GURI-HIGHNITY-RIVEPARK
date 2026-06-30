@@ -493,7 +493,12 @@
               <input type="text" name="cafe_id" placeholder="네이버 카페 닉네임" required />
             </div>
           </div>
-
+		  
+		  <div class="field-group" style="margin-bottom: 20px;">
+			<label for="address">현재 주소</label>
+			<input type="text" id="address" placeholder="시/도, 시/군/구, 상세주소를 입력하세요" required>
+		  </div>
+		  
           <div class="field-group" style="margin-bottom: 20px;">
             <label>공동명의 계약자 (있는 경우만)</label>
             <input type="text" name="co_full_name" placeholder="공동명의자 성명" />
@@ -607,7 +612,7 @@
   (function () {
     "use strict";
 	// index.html 하단 <script> 태그 내부
-	const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHnldV4UoXGni8oRnGPwJ4dod1aNX43561jYdvc9Cma2x4v-GfmNLcMFZ-f4igAAOOag/exec';
+	const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxoYFt_sYpykbwB8YQQUn6FLclwFLt3LcqK5xMhwqaRg78PwEEK902ziHytvdE66ppq/exec';
 
     const form = document.getElementById("delegation-form");
     const canvas = document.getElementById("signature-canvas");
@@ -690,7 +695,7 @@
 
       // 이미지 압축 내보내기 (JPEG 포맷, 0.65 품질)
       const signatureImage = signaturePad.toDataURL("image/jpeg", 0.65);
-
+	  const address = document.getElementById('address').value;
       const payload = {
         name: document.querySelector('input[name="full_name"]').value,
         dong: document.querySelector('input[name="dong"]').value,
@@ -700,6 +705,7 @@
         email: document.querySelector('input[name="email"]').value,
         cafe_id: document.querySelector('input[name="cafe_id"]').value,
         co_name: document.querySelector('input[name="co_full_name"]').value,
+		address: address,
         signature: signatureImage
       };
 
