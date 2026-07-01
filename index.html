@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
   
-  <!-- 필압 인식을 위한 Signature Pad 라이브러리 추가 -->
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
   <style>
@@ -16,6 +15,7 @@
       --bg-color: #F4F7FB;   /* 배경 회색빛 */
       --border: #D1D5DB;
       --text-dark: #333333;
+      --success: #22C55E;    /* 성공 녹색 */
     }
 
     body {
@@ -140,7 +140,12 @@
     }
     .field-inline {
       display: flex;
-      gap: 10px;
+      gap: 15px;
+    }
+    /* [요청 반영] 동 호수 입력란 너비 최적화 */
+    .field-inline .field-group {
+      min-width: auto;
+      flex: 0 1 110px;
     }
     .hint {
       font-size: 12px;
@@ -328,7 +333,7 @@
       cursor: not-allowed;
     }
 
-    /* 서면 제출 안내 영역 (요청사항 3, 4) */
+    /* 서면 제출 안내 영역 */
     .manual-submit-info {
       margin-top: 40px;
       padding-top: 25px;
@@ -361,6 +366,29 @@
     .btn-download:hover {
       background: #E2E8F0;
       border-color: #94A3B8;
+    }
+
+    /* [요청 반영] 작업 완료 가시화 성공 화면 스타일 */
+    .success-screen {
+      text-align: center;
+      padding: 60px 20px;
+      display: none;
+    }
+    .success-icon {
+      font-size: 64px;
+      color: var(--success);
+      margin-bottom: 20px;
+    }
+    .success-screen h2 {
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+    .success-screen p {
+      color: #475569;
+      line-height: 1.8;
+      font-size: 15px;
+      margin-bottom: 30px;
     }
 
     /* 모바일 반응형 처리 */
@@ -396,7 +424,6 @@
     </div>
 
     <div class="layout">
-      <!-- 좌측 사이드바 (점 제거) -->
       <aside class="sidebar">
         <div class="sidebar-section">
           <div class="sidebar-section-title">수신</div>
@@ -436,7 +463,6 @@
         </div>
       </aside>
 
-      <!-- 우측 폼 -->
       <main class="content">
         <form id="delegation-form">
           <h2 class="section-title">수신 (수임인)</h2>
@@ -456,12 +482,12 @@
               <div class="field-inline">
                 <div class="field-group">
                   <label style="font-size:12px;">동</label>
-                  <input type="text" name="dong" placeholder="예:101"
+                  <input type="text" name="dong" placeholder="예: 101" maxlength="3"
                          oninput="this.value=this.value.replace(/[^0-9]/g,'');" required />
                 </div>
                 <div class="field-group">
                   <label style="font-size:12px;">호</label>
-                  <input type="text" name="ho" placeholder="예:1004"
+                  <input type="text" name="ho" placeholder="예: 1004" maxlength="4"
                          oninput="this.value=this.value.replace(/[^0-9]/g,'');" required />
                 </div>
               </div>
@@ -478,7 +504,9 @@
 
             <div class="field-group">
               <label>휴대전화 번호 (필수)*</label>
-              <input type="tel" name="phone" placeholder="예: 010-0000-0000" required />
+              <div class="hint">예: 010-1234-5678, 01012345678</div>
+              <input type="tel" name="phone" placeholder="숫자와 하이픈만 입력 가능" 
+                     oninput="this.value=this.value.replace(/[^0-9-]/g,'');" required />
             </div>
           </div>
 
@@ -490,15 +518,15 @@
 
             <div class="field-group">
               <label>입주자 카페 닉네임 (필수)*</label>
-              <input type="text" name="cafe_id" placeholder="네이버 카페 닉네임" required />
+              <input type="text" name="cafe_id" placeholder="예: '101동 홍길동' => '홍길동' 입력" required />
             </div>
           </div>
-		  
-		  <div class="field-group" style="margin-bottom: 20px;">
-			<label for="address">현재 주소</label>
-			<input type="text" id="address" placeholder="시/도, 시/군/구, 상세주소를 입력하세요" required>
-		  </div>
-		  
+          
+          <div class="field-group" style="margin-bottom: 20px;">
+            <label for="address">현재 주소 (필수)*</label>
+            <input type="text" id="address" placeholder="시/도, 시/군/구, 상세주소를 입력하세요" required>
+          </div>
+          
           <div class="field-group" style="margin-bottom: 20px;">
             <label>공동명의 계약자 (있는 경우만)</label>
             <input type="text" name="co_full_name" placeholder="공동명의자 성명" />
@@ -547,7 +575,6 @@
             </div>
           </div>
 
-          <!-- 서명 패드 (필압 라이브러리 적용) -->
           <div class="signature-wrapper">
             <h3 class="tab-label">서명 패드 (필수)*</h3>
             <div class="signature-box">
@@ -566,7 +593,7 @@
               <strong>1. 수집·이용 목적</strong><br />
               - 입주예정자협의회 운영 및 상기 위임사항 수행을 위한 정보 이용 및 안내<br /><br />
               <strong>2. 수집 항목</strong><br />
-              - (필수) 계약자 성명, 생년월일, 계약 동·호수, 휴대전화 번호, 이메일, 입주자 카페 닉네임, 공동명의자 성명<br /><br />
+              - (필수) 계약자 성명, 생년월일, 계약 동·호수, 휴대전화 번호, 이메일, 입주자 카페 닉네임, 공동명의자 성명, 주소<br /><br />
               <strong>3. 보유·이용 기간</strong><br />
               - 위임장 제출일로부터 공동주택관리법 제 11조에 따른 입주자대표회의 구성 시까지 보관 후 파기<br /><br />
               <strong>4. 동의 거부 권리 및 불이익</strong><br />
@@ -585,7 +612,6 @@
             </div>
           </div>
 
-          <!-- 제출 영역 및 서면 접수 안내 -->
           <div class="submit-area">
             <p>아래 버튼을 눌러 위임장을 제출해 주세요.</p>
             <button type="submit" id="submitBtn" class="btn-submit">전자 위임장 제출하기</button>
@@ -598,12 +624,21 @@
                 <strong>자필 서명 및 지장 날인</strong> 후 스캔 또는 사진을 찍어<br>
                 입주자협의회 이메일(<strong>highnityriverpark@gmail.com</strong>)로 보내주시기 바랍니다.
               </p>
-              <!-- 다운로드 링크 파일명은 href 안에 실제 첨부할 파일의 경로로 수정해주세요 -->
-              <a href="구리역하이니티리버파크_입예협_위임장_양식.docx" download class="btn-download">📄 위임장 양식 다운로드 (Docs)</a>
+              <a href="구리역하이니티리버파크_입예협_위임장_양식.pdf" download class="btn-download">📄 위임장 양식 다운로드 (pdf)</a>
             </div>
           </div>
-
         </form>
+
+        <div id="success-screen" class="success-screen">
+          <div class="success-icon">✓</div>
+          <h2>전자 위임장 제출 완료</h2>
+          <p>
+            구리역 하이니티 리버파크 입주예정자협의회<br>
+            전자 위임장 제출이 정상적으로 완료되었습니다.<br><br>
+            소중한 참여와 동의에 진심으로 감사드립니다.
+          </p>
+          <button type="button" class="btn-submit" onclick="location.reload();" style="max-width: 180px; padding: 12px 0; font-size: 15px;">확인</button>
+        </div>
       </main>
     </div>
   </div>
@@ -611,18 +646,18 @@
   <script>
   (function () {
     "use strict";
-	// index.html 하단 <script> 태그 내부
-	const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxoYFt_sYpykbwB8YQQUn6FLclwFLt3LcqK5xMhwqaRg78PwEEK902ziHytvdE66ppq/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyolIT-Cq8DLD7hBhEiUIHRu4Zdv5ghPg0GxJ1fFOChA7aK1PI9nyAo1MYR0OUwEep-QA/exec';
 
     const form = document.getElementById("delegation-form");
     const canvas = document.getElementById("signature-canvas");
     const submitBtn = document.getElementById("submitBtn");
+    const successScreen = document.getElementById("success-screen");
     
     if (!form || !canvas) return;
 
     // --- 필압 인식 Signature Pad 초기화 ---
     const signaturePad = new SignaturePad(canvas, {
-      backgroundColor: 'rgba(255, 255, 255, 1)', // JPEG 변환 시 검은 배경 방지
+      backgroundColor: 'rgba(255, 255, 255, 1)',
       penColor: 'black',
       minWidth: 1.5,
       maxWidth: 3.5
@@ -635,31 +670,26 @@
     const consentPrivacy = document.getElementById("consent-privacy");
     const consentDelegation = document.getElementById("consent-delegation");
 
-    // 캔버스 리사이징 처리 (고해상도 디스플레이 대응)
     function resizeCanvas() {
       const ratio = Math.max(window.devicePixelRatio || 1, 1);
-      // 기존 캔버스 내용을 임시 저장
       const data = signaturePad.toData();
       canvas.width = canvas.offsetWidth * ratio;
       canvas.height = canvas.offsetHeight * ratio;
       canvas.getContext("2d").scale(ratio, ratio);
       signaturePad.clear();
-      // 크기 변경 후 기존 데이터 다시 그리기
       if (data.length > 0) {
           signaturePad.fromData(data);
       }
     }
     
     window.addEventListener("resize", resizeCanvas);
-    resizeCanvas(); // 초기 렌더링 시 캔버스 크기 맞춤
+    resizeCanvas();
 
-    // 캔버스에 그리기 시작하면 힌트 텍스트 숨기기
     signaturePad.addEventListener("beginStroke", () => {
       if(signatureHint) signatureHint.style.display = "none";
       if(signatureError) signatureError.style.display = "none";
     });
 
-    // 지우기 버튼 동작
     if (clearBtn) {
       clearBtn.addEventListener("click", () => {
         signaturePad.clear();
@@ -667,7 +697,6 @@
       });
     }
 
-    // 폼 제출 (구글 스크립트로 fetch 전송)
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       
@@ -682,7 +711,6 @@
         return;
       }
 
-      // 서명 패드가 비어있는지 확인
       if (signaturePad.isEmpty()) {
         if (signatureError) {
           signatureError.style.display = "block";
@@ -693,9 +721,9 @@
       submitBtn.innerText = "안전하게 전송 중입니다...";
       submitBtn.disabled = true;
 
-      // 이미지 압축 내보내기 (JPEG 포맷, 0.65 품질)
       const signatureImage = signaturePad.toDataURL("image/jpeg", 0.65);
-	  const address = document.getElementById('address').value;
+      const address = document.getElementById('address').value;
+      
       const payload = {
         name: document.querySelector('input[name="full_name"]').value,
         dong: document.querySelector('input[name="dong"]').value,
@@ -705,7 +733,7 @@
         email: document.querySelector('input[name="email"]').value,
         cafe_id: document.querySelector('input[name="cafe_id"]').value,
         co_name: document.querySelector('input[name="co_full_name"]').value,
-		address: address,
+        address: address,
         signature: signatureImage
       };
 
@@ -719,15 +747,16 @@
       .then(response => response.json())
       .then(res => {
         if (res.result === "success") {
-          alert("위임장 제출이 완료되었습니다. 참여해 주셔서 감사합니다!");
-          form.reset();
-          signaturePad.clear();
-          if(signatureHint) signatureHint.style.display = "block";
+          // [요청 반영] 폼 숨기고 성공 가시화 화면 활성화
+          form.style.display = "none";
+          if (successScreen) successScreen.style.display = "block";
+          window.scrollTo(0, 0);
         } else {
-          alert("구글 서버 저장 실패: " + res.message);
+          // 중복 체크 에러 등 백엔드 실패 메시지 바인딩
+          alert("제출 제한 안내: " + res.message);
+          submitBtn.innerText = "전자 위임장 제출하기";
+          submitBtn.disabled = false;
         }
-        submitBtn.innerText = "전자 위임장 제출하기";
-        submitBtn.disabled = false;
       })
       .catch(error => {
         alert("네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
