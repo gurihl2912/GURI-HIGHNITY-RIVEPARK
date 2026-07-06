@@ -5,8 +5,6 @@
   <title>구리역 하이니티 리버파크 입주예정자협의회 위임장</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
-  
-  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
   <style>
     :root {
@@ -142,7 +140,6 @@
       display: flex;
       gap: 15px;
     }
-    /* [요청 반영] 동 호수 입력란 너비 최적화 */
     .field-inline .field-group {
       min-width: auto;
       flex: 0 1 110px;
@@ -166,6 +163,67 @@
       outline: none;
       border-color: var(--secondary);
       box-shadow: 0 0 0 3px rgba(0, 71, 154, 0.1);
+    }
+    
+    /* 주소 검색창 전용 스타일 */
+    .address-search-row { display: flex; gap: 10px; margin-bottom: 8px; }
+    .btn-search { 
+      background: #FFFFFF; 
+      border: 1px solid var(--primary); 
+      color: var(--primary); 
+      font-weight: 600; 
+      padding: 0 20px; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .btn-search:hover { background: #F1F5F9; }
+
+    /* 주소 검색 모달 레이어 스타일 */
+    #address-layer-bg {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+    }
+    #address-layer {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 95%;
+      max-width: 500px;
+      height: 480px;
+      background: #FFFFFF;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      overflow: hidden;
+    }
+    #address-layer-header {
+      background-color: var(--primary);
+      color: #FFFFFF;
+      padding: 14px 20px;
+      font-weight: 700;
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-close-layer {
+      background: none;
+      border: none;
+      color: #FFFFFF;
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+    }
+    #address-layer-body {
+      width: 100%;
+      height: 430px;
     }
 
     /* 안내 박스 및 약관 */
@@ -194,9 +252,7 @@
       line-height: 1.6;
       color: #334155;
     }
-    strong {
-      color: #0F172A;
-    }
+    strong { color: #0F172A; }
 
     /* 서명 패드 */
     .signature-wrapper {
@@ -206,6 +262,7 @@
       font-size: 16px;
       margin-bottom: 15px;
       color: var(--primary);
+      font-weight: 700;
     }
     .signature-box {
       border: 2px dashed #94A3B8;
@@ -245,9 +302,7 @@
       font-weight: 500;
       transition: all 0.2s;
     }
-    .btn-ghost:hover {
-      background: #F1F5F9;
-    }
+    .btn-ghost:hover { background: #F1F5F9; }
     .error-message {
       color: #DC2626;
       font-size: 13px;
@@ -256,19 +311,14 @@
     }
 
     /* 개인정보 동의 */
-    .consent-section {
-      margin-bottom: 40px;
-    }
+    .consent-section { margin-bottom: 40px; }
     .consent-title {
       font-size: 16px;
       font-weight: 600;
       margin-bottom: 12px;
       color: var(--primary);
     }
-    .required {
-      color: #DC2626;
-      margin-left: 4px;
-    }
+    .required { color: #DC2626; margin-left: 4px; }
     .consent-text {
       background: #F8FAFC;
       padding: 16px;
@@ -324,13 +374,29 @@
       transition: background 0.3s;
       width: 100%;
       max-width: 350px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
-    .btn-submit:hover {
-      background: var(--secondary);
-    }
+    .btn-submit:hover { background: var(--secondary); }
     .btn-submit:disabled {
       background: #94A3B8;
       cursor: not-allowed;
+    }
+
+    /* 로딩 스피너 애니메이션 CSS */
+    .spinner {
+      display: none; 
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     /* 서면 제출 안내 영역 */
@@ -368,7 +434,7 @@
       border-color: #94A3B8;
     }
 
-    /* [요청 반영] 작업 완료 가시화 성공 화면 스타일 */
+    /* 성공 화면 */
     .success-screen {
       text-align: center;
       padding: 60px 20px;
@@ -391,27 +457,12 @@
       margin-bottom: 30px;
     }
 
-    /* 모바일 반응형 처리 */
     @media (max-width: 768px) {
-      .layout {
-        flex-direction: column;
-      }
-      .sidebar {
-        width: auto;
-        border-right: none;
-        border-bottom: 1px solid #E2E8F0;
-        padding: 20px;
-      }
-      .info-row {
-        flex-direction: column;
-        gap: 15px;
-      }
-      .content {
-        padding: 20px;
-      }
-      .header h1 {
-        font-size: 20px;
-      }
+      .layout { flex-direction: column; }
+      .sidebar { width: auto; border-right: none; border-bottom: 1px solid #E2E8F0; padding: 20px; }
+      .info-row { flex-direction: column; gap: 15px; }
+      .content { padding: 20px; }
+      .header h1 { font-size: 20px; }
     }
   </style>
 </head>
@@ -427,39 +478,19 @@
       <aside class="sidebar">
         <div class="sidebar-section">
           <div class="sidebar-section-title">수신</div>
-          <ul>
-            <li>구리역 하이니티 리버파크</li>
-            <li>입주예정자협의회</li>
-          </ul>
+          <ul><li>구리역 하이니티 리버파크</li><li>입주예정자협의회</li></ul>
         </div>
-
         <div class="sidebar-section">
           <div class="sidebar-section-title">계약자 정보</div>
-          <ul>
-            <li>계약자 성명</li>
-            <li>생년월일</li>
-            <li>휴대전화 / 이메일</li>
-            <li>계약 동·호수</li>
-            <li>카페닉네임</li>
-          </ul>
+          <ul><li>계약자 성명</li><li>생년월일</li><li>휴대전화 / 이메일</li><li>계약 동·호수</li><li>카페닉네임</li></ul>
         </div>
-
         <div class="sidebar-section">
           <div class="sidebar-section-title">공동명의</div>
-          <ul>
-            <li>공동명의 계약자</li>
-            <li>있을 경우만</li>
-            <li>성명 입력</li>
-          </ul>
+          <ul><li>공동명의 계약자</li><li>있을 경우만</li><li>성명 입력</li></ul>
         </div>
-
         <div class="sidebar-section">
           <div class="sidebar-section-title">제출 안내</div>
-          <ul>
-            <li>필수항목 입력</li>
-            <li>전자서명 후</li>
-            <li>제출 버튼 클릭</li>
-          </ul>
+          <ul><li>필수항목 입력</li><li>전자서명 후</li><li>제출 버튼 클릭</li></ul>
         </div>
       </aside>
 
@@ -482,13 +513,11 @@
               <div class="field-inline">
                 <div class="field-group">
                   <label style="font-size:12px;">동</label>
-                  <input type="text" name="dong" placeholder="예: 101" maxlength="3"
-                         oninput="this.value=this.value.replace(/[^0-9]/g,'');" required />
+                  <input type="text" name="dong" placeholder="예:101" maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'');" required />
                 </div>
                 <div class="field-group">
                   <label style="font-size:12px;">호</label>
-                  <input type="text" name="ho" placeholder="예: 1004" maxlength="4"
-                         oninput="this.value=this.value.replace(/[^0-9]/g,'');" required />
+                  <input type="text" name="ho" placeholder="예:1004" maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'');" required />
                 </div>
               </div>
             </div>
@@ -498,15 +527,13 @@
             <div class="field-group">
               <label>생년월일 (필수)*</label>
               <div class="hint">주민등록번호 앞 6자리(숫자만)</div>
-              <input type="text" name="birth" maxlength="6" placeholder="예: 751225"
-                     oninput="this.value=this.value.replace(/[^0-9]/g,'');" required />
+              <input type="text" name="birth" maxlength="6" placeholder="예: 751225" oninput="this.value=this.value.replace(/[^0-9]/g,'');" required />
             </div>
 
             <div class="field-group">
               <label>휴대전화 번호 (필수)*</label>
               <div class="hint">예: 010-1234-5678, 01012345678</div>
-              <input type="tel" name="phone" placeholder="숫자와 하이픈만 입력 가능" 
-                     oninput="this.value=this.value.replace(/[^0-9-]/g,'');" required />
+              <input type="tel" name="phone" placeholder="숫자와 하이픈만 입력 가능" oninput="this.value=this.value.replace(/[^0-9-]/g,'');" required />
             </div>
           </div>
 
@@ -518,13 +545,18 @@
 
             <div class="field-group">
               <label>입주자 카페 닉네임 (필수)*</label>
-              <input type="text" name="cafe_id" placeholder="예: '101동 홍길동' => '홍길동' 입력" required />
+              <input type="text" name="cafe_id" placeholder="네이버 카페 닉네임" required />
             </div>
           </div>
           
           <div class="field-group" style="margin-bottom: 20px;">
-            <label for="address">현재 주소 (필수)*</label>
-            <input type="text" id="address" placeholder="시/도, 시/군/구, 상세주소를 입력하세요" required>
+            <label>현재 주소 (필수)*</label>
+            <div class="address-search-row">
+              <input type="text" id="postcode" placeholder="우편번호" style="width:100px; background:#F8FAFC;" readonly required>
+              <button type="button" onclick="execDaumPostcode()" class="btn-search">주소 검색</button>
+            </div>
+            <input type="text" id="address_basic" placeholder="기본 주소" style="background:#F8FAFC; margin-bottom:8px;" readonly required>
+            <input type="text" id="address_detail" placeholder="상세 주소를 입력해주세요" required>
           </div>
           
           <div class="field-group" style="margin-bottom: 20px;">
@@ -544,7 +576,7 @@
             <ol>
               <li>입주예정자의 권리·이익에 대한 업무추진 방향 설정</li>
               <li>입주예정자협의회 회원관리(가입, 징계, 탈퇴 등)</li>
-              <li>협의회 회비의 집행 및 관리(징수, 모금, 내역증빙 등)</li>
+              <li>협의회 회비의 집행 및 관리(회비 수납, 모금, 내역증빙 등)</li>
               <li>시행자(조합 등) 및 시공자, 관련 용역사들과의 협의 및 협상</li>
               <li>대외홍보 및 각종 자문(각종 문자발송, 전화, 우편발송, SNS 운영 등)</li>
               <li>입주에 필요한 용역사(금융기관, 법무법인 등)의 입찰 및 선정에 대한 제반업무</li>
@@ -571,20 +603,8 @@
 
             <h3 style="margin-top: 25px;">개인정보 처리 보호 서약 안내</h3>
             <div class="delegate-intro">
-              <strong>※ 수임인은 본 위임장을 통해 수집한 개인정보를 「개인정보 보호법」 및 관련 법령에 따라 안전하게 관리하며, 어떠한 사적 용도 또는 부당한 외부 제공을 하지 않을 것을 엄중히 서약합니다.</strong>
+              <strong>※ 수임인은 위임인의 개인정보를 「개인정보 보호법」 및 관련 법령에 따라 안전하게 관리하며, 어떠한 사적 용도 또는 부당한 외부 제공을 하지 않을 것을 엄중히 서약합니다.</strong>
             </div>
-          </div>
-
-          <div class="signature-wrapper">
-            <h3 class="tab-label">서명 패드 (필수)*</h3>
-            <div class="signature-box">
-              <canvas id="signature-canvas"></canvas>
-              <div class="signature-hint" id="signature-hint">마우스 또는 손가락으로 위 영역에 서명해 주세요.</div>
-              <div class="signature-controls">
-                <button type="button" id="clear-signature" class="btn-ghost">서명패드 지우기</button>
-              </div>
-            </div>
-            <div id="signature-error" class="error-message">서명을 남겨주세요.</div>
           </div>
 
           <div class="consent-section">
@@ -612,9 +632,24 @@
             </div>
           </div>
 
+          <div class="signature-wrapper">
+            <h3 class="tab-label">서명 패드 (필수)*</h3>
+            <div class="signature-box">
+              <canvas id="signature-canvas"></canvas>
+              <div class="signature-hint" id="signature-hint">마우스 또는 손가락으로 위 영역에 서명해 주세요.</div>
+              <div class="signature-controls">
+                <button type="button" id="clear-signature" class="btn-ghost">서명패드 지우기</button>
+              </div>
+            </div>
+            <div id="signature-error" class="error-message">서명을 남겨주세요.</div>
+          </div>
+
           <div class="submit-area">
             <p>아래 버튼을 눌러 위임장을 제출해 주세요.</p>
-            <button type="submit" id="submitBtn" class="btn-submit">전자 위임장 제출하기</button>
+            <button type="submit" id="submitBtn" class="btn-submit">
+              <span class="spinner" id="loadingSpinner"></span> 
+              <span id="submitText">전자 위임장 제출하기</span>
+            </button>
             <div id="form-error" class="error-message" style="margin-top: 10px;"></div>
             
             <div class="manual-submit-info">
@@ -624,7 +659,7 @@
                 <strong>자필 서명 및 지장 날인</strong> 후 스캔 또는 사진을 찍어<br>
                 입주자협의회 이메일(<strong>highnityriverpark@gmail.com</strong>)로 보내주시기 바랍니다.
               </p>
-              <a href="구리역하이니티리버파크_입예협_위임장_양식.pdf" download class="btn-download">📄 위임장 양식 다운로드 (pdf)</a>
+              <a href="구리역하이니티리버파크_입예협_위임장_양식.pdf" download class="btn-download">📄 위임장 양식 다운로드 (PDF)</a>
             </div>
           </div>
         </form>
@@ -643,19 +678,68 @@
     </div>
   </div>
 
+  <div id="address-layer-bg" onclick="closeDaumPostcode()"></div>
+  <div id="address-layer">
+    <div id="address-layer-header">
+      <span>주소 검색</span>
+      <button type="button" onclick="closeDaumPostcode()" class="btn-close-layer">&times;</button>
+    </div>
+    <div id="address-layer-body" style="-webkit-overflow-scrolling:touch;"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
   <script>
+  // 🔒 보안 및 초기화 타이밍 버그가 해결된 카카오 우편번호 제어 스크립트
+  const element_layer = document.getElementById('address-layer');
+  const element_bg = document.getElementById('address-layer-bg');
+  const element_body = document.getElementById('address-layer-body');
+
+  function closeDaumPostcode() {
+    element_layer.style.display = 'none';
+    element_bg.style.display = 'none';
+    element_body.innerHTML = ''; // 닫을 때 내부를 비워 메모리 누수 및 오동작 방지
+  }
+
+  function execDaumPostcode() {
+    // [💡 핵심 수정] 레이어를 화면에 먼저 노출시킨 후 API를 선언해야만 iframe의 클릭 이벤트가 정상 바인딩됩니다.
+    element_layer.style.display = 'block';
+    element_bg.style.display = 'block';
+    element_body.innerHTML = ''; // 이전 검색 내역/중복 창 제거
+
+    new daum.Postcode({
+      oncomplete: function(data) {
+        // 검색결과 항목을 클릭했을 때 실행할 코드
+        document.getElementById('postcode').value = data.zonecode;
+        document.getElementById('address_basic').value = data.roadAddress;
+        
+        closeDaumPostcode(); // 입력이 끝나면 레이어 닫기 및 초기화
+        
+        // 브라우저 포커스 전환 딜레이 처리 (모바일/인앱대응)
+        setTimeout(function() {
+          document.getElementById('address_detail').focus();
+        }, 100);
+      },
+      width : '100%',
+      height : '100%',
+      maxSuggestItems : 5
+    }).embed(element_body); // 레이어 내부에 주소창 삽입
+  }
+
   (function () {
     "use strict";
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyolIT-Cq8DLD7hBhEiUIHRu4Zdv5ghPg0GxJ1fFOChA7aK1PI9nyAo1MYR0OUwEep-QA/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxoYFt_sYpykbwB8YQQUn6FLclwFLt3LcqK5xMhwqaRg78PwEEK902ziHytvdE66ppq/exec';
 
     const form = document.getElementById("delegation-form");
     const canvas = document.getElementById("signature-canvas");
     const submitBtn = document.getElementById("submitBtn");
+    const submitText = document.getElementById("submitText");
+    const loadingSpinner = document.getElementById("loadingSpinner");
     const successScreen = document.getElementById("success-screen");
     
     if (!form || !canvas) return;
 
-    // --- 필압 인식 Signature Pad 초기화 ---
     const signaturePad = new SignaturePad(canvas, {
       backgroundColor: 'rgba(255, 255, 255, 1)',
       penColor: 'black',
@@ -718,11 +802,16 @@
         return;
       }
 
-      submitBtn.innerText = "안전하게 전송 중입니다...";
+      submitText.innerText = "안전하게 전송 중입니다...";
+      loadingSpinner.style.display = "inline-block";
       submitBtn.disabled = true;
 
       const signatureImage = signaturePad.toDataURL("image/jpeg", 0.65);
-      const address = document.getElementById('address').value;
+      
+      const post = document.getElementById('postcode').value;
+      const addrBasic = document.getElementById('address_basic').value;
+      const addrDetail = document.getElementById('address_detail').value;
+      const fullAddress = `(${post}) ${addrBasic} ${addrDetail}`;
       
       const payload = {
         name: document.querySelector('input[name="full_name"]').value,
@@ -733,7 +822,7 @@
         email: document.querySelector('input[name="email"]').value,
         cafe_id: document.querySelector('input[name="cafe_id"]').value,
         co_name: document.querySelector('input[name="co_full_name"]').value,
-        address: address,
+        address: fullAddress.trim(), 
         signature: signatureImage
       };
 
@@ -747,20 +836,20 @@
       .then(response => response.json())
       .then(res => {
         if (res.result === "success") {
-          // [요청 반영] 폼 숨기고 성공 가시화 화면 활성화
           form.style.display = "none";
           if (successScreen) successScreen.style.display = "block";
           window.scrollTo(0, 0);
         } else {
-          // 중복 체크 에러 등 백엔드 실패 메시지 바인딩
           alert("제출 제한 안내: " + res.message);
-          submitBtn.innerText = "전자 위임장 제출하기";
+          submitText.innerText = "전자 위임장 제출하기";
+          loadingSpinner.style.display = "none";
           submitBtn.disabled = false;
         }
       })
       .catch(error => {
         alert("네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-        submitBtn.innerText = "전자 위임장 제출하기";
+        submitText.innerText = "전자 위임장 제출하기";
+        loadingSpinner.style.display = "none";
         submitBtn.disabled = false;
       });
     });
