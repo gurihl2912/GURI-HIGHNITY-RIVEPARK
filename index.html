@@ -351,6 +351,36 @@
       accent-color: var(--primary);
     }
 
+    /* 🚨 추가된 캡챠 CSS */
+    .captcha-section {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .captcha-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .captcha-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      background: #FFFFFF;
+      padding: 10px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      letter-spacing: 2px;
+      min-width: 80px;
+      text-align: center;
+    }
+    #captcha-answer {
+      width: 100px;
+    }
+
     /* 하단 제출 버튼 영역 */
     .submit-area {
       text-align: center;
@@ -644,6 +674,16 @@
             <div id="signature-error" class="error-message">서명을 남겨주세요.</div>
           </div>
 
+          <div class="captcha-section">
+            <div class="consent-title">자동등록방지 (봇 방지)<span class="required">*</span></div>
+            <div class="captcha-container">
+              <span id="captcha-question" class="captcha-text"></span>
+              <input type="text" id="captcha-answer" placeholder="정답" maxlength="2" oninput="this.value=this.value.replace(/[^0-9]/g,'');" required />
+              <button type="button" id="refresh-captcha" class="btn-ghost">새로고침</button>
+            </div>
+            <div id="captcha-error" class="error-message">정답이 올바르지 않습니다. 다시 계산해 주세요.</div>
+          </div>
+
           <div class="submit-area">
             <p>아래 버튼을 눌러 위임장을 제출해 주세요.</p>
             <button type="submit" id="submitBtn" class="btn-submit">
@@ -729,7 +769,7 @@
 
   (function () {
     "use strict";
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxoYFt_sYpykbwB8YQQUn6FLclwFLt3LcqK5xMhwqaRg78PwEEK902ziHytvdE66ppq/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyolIT-Cq8DLD7hBhEiUIHRu4Zdv5ghPg0GxJ1fFOChA7aK1PI9nyAo1MYR0OUwEep-QA/exec';
 
     const form = document.getElementById("delegation-form");
     const canvas = document.getElementById("signature-canvas");
@@ -753,6 +793,26 @@
     const formError = document.getElementById("form-error");
     const consentPrivacy = document.getElementById("consent-privacy");
     const consentDelegation = document.getElementById("consent-delegation");
+
+    // 🚨 캡챠 관련 스크립트 추가
+    let currentCaptchaAnswer = 0;
+    const captchaQuestionEl = document.getElementById('captcha-question');
+    const captchaAnswerEl = document.getElementById('captcha-answer');
+    const refreshCaptchaBtn = document.getElementById('refresh-captcha');
+    const captchaError = document.getElementById('captcha-error');
+
+    function generateCaptcha() {
+      const num1 = Math.floor(Math.random() * 9) + 1; // 1~9
+      const num2 = Math.floor(Math.random() * 9) + 1; // 1~9
+      currentCaptchaAnswer = num1 + num2;
+      captchaQuestionEl.textContent = `${num1} + ${num2} = ?`;
+      captchaAnswerEl.value = '';
+      if(captchaError) captchaError.style.display = 'none';
+    }
+
+    // 초기 캡챠 생성 및 새로고침 이벤트 바인딩
+    generateCaptcha();
+    if(refreshCaptchaBtn) refreshCaptchaBtn.addEventListener('click', generateCaptcha);
 
     function resizeCanvas() {
       const ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -786,6 +846,7 @@
       
       if (formError) formError.style.display = "none";
       if (signatureError) signatureError.style.display = "none";
+      if (captchaError) captchaError.style.display = "none";
 
       if (!consentPrivacy?.checked || !consentDelegation?.checked) {
         if (formError) {
@@ -799,6 +860,14 @@
         if (signatureError) {
           signatureError.style.display = "block";
         }
+        return;
+      }
+
+      // 🚨 캡챠 정답 검증 로직 추가
+      if (parseInt(captchaAnswerEl.value, 10) !== currentCaptchaAnswer) {
+        if (captchaError) captchaError.style.display = "block";
+        generateCaptcha(); // 틀리면 새로운 문제를 냅니다.
+        captchaAnswerEl.focus();
         return;
       }
 
